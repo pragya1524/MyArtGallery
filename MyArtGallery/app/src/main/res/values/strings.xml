@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MyArtGallery</string>
+    <string name="app_description">My Art Gallery</string>
+    <string name="Creator">by Pragya Sharma</string>
+    <string name="Co_Creator">by Vansh</string>
+    <string name="Start">Start Tour</string>
+    <string name="End_Description">Thank you for visiting.</string>
+    <string name="Visit_Again">Visit Again?</string>
+    <string name="End">The End</string>
+    <string name="Next">Next</string>
+    <string name="Previous">Previous</string>
+    <string name="PictureDescription">Picture Description</string>
+    <string name="Picture_1">Ochre Bazaar</string>
+    <string name="Picture_2">High rise Stormwatch</string>
+    <string name="Picture_3">Warm Whiffs</string>
+    <string name="Picture_4">Radiant Reverie</string>
+    <string name="Picture_5">Countryside Canvas</string>
+    <string name="Picture_6">Nighttime Whispers</string>
+    <string name="Picture_7">Forgotten Footprints</string>
+    <string name="Picture_8">Cloudscape Dreams</string>"
+    <string name="iPhone">Shot On iPhone</string>
+    <string name="Android">Shot On Android</string>
+    <string name="Samsung">Shot On Samsung A34</string>
+
+</resources>
