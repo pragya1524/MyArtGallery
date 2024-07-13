@@ -1,7 +1,6 @@
 package com.example.myartgallery
 
 import android.os.Bundle
-import android.util.EventLogTags.Description
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,16 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,7 +70,7 @@ fun MyArtGalleryApp( modifier: Modifier = Modifier){
     when (nextStep) {
         0 -> {
             MyArtGalleryStartAndEnd(
-                imageResourceId = R.drawable.artgalleryopening,
+                imageResourceId = R.drawable.artgallery1,
                 contentDescriptionResourceId = R.string.PictureDescription,
                 TitleResourceId = R.string.app_description,
                 DescriptionResourceId = R.string.Creator,
@@ -187,7 +183,7 @@ fun MyArtGalleryApp( modifier: Modifier = Modifier){
                 contentDescriptionResourceId = R.string.PictureDescription,
                 pictureTitleResourceId = R.string.Picture_7,
                 creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.Android,
+                shotonResourceId = R.string.iPhone,
                 onPreviousClick = {
                     nextStep -= 1
                 },
@@ -214,7 +210,7 @@ fun MyArtGalleryApp( modifier: Modifier = Modifier){
         }
         9 -> {
             MyArtGalleryStartAndEnd(
-                imageResourceId = R.drawable.artgalleryopening,
+                imageResourceId = R.drawable.artgallery1,
                 contentDescriptionResourceId = R.string.PictureDescription,
                 TitleResourceId = R.string.End,
                 DescriptionResourceId = R.string.End_Description,
@@ -224,8 +220,6 @@ fun MyArtGalleryApp( modifier: Modifier = Modifier){
                 }
             )
         }
-
-
     }
 }
 
@@ -249,18 +243,18 @@ fun MyArtGalleryStartAndEnd(
     ){  Box(modifier = Modifier
         .padding(20.dp),
         contentAlignment = Alignment.TopCenter )
-        {
-            Image(
-                    painter = painterResource(imageResourceId),
-                    contentDescription = stringResource(contentDescriptionResourceId),
-                    modifier = Modifier
-                        .size(585.dp)
-                        //.width(500.dp)
-                        //.height(500.dp)
-                        .shadow(10.dp)
-                        .padding(top = 28.dp, bottom = 23.dp)
-                )
-        }
+    {
+        Image(
+            painter = painterResource(imageResourceId),
+            contentDescription = stringResource(contentDescriptionResourceId),
+            modifier = Modifier
+                .size(585.dp)
+                //.width(500.dp)
+                //.height(500.dp)
+                .shadow(10.dp)
+                .padding(top = 28.dp, bottom = 23.dp)
+        )
+    }
         Text(
             text = stringResource(TitleResourceId),
             fontSize = 36.sp,
@@ -281,7 +275,7 @@ fun MyArtGalleryStartAndEnd(
             shape = RoundedCornerShape(ZeroCornerSize),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
 
-        ){
+            ){
             Text(
                 text = stringResource(Act),
                 fontSize = 20.sp,
@@ -322,8 +316,8 @@ fun MyArtGalleryLayout(
                 //.width(500.dp)
                 //.height(500.dp)
                 .padding(top = 28.dp, bottom = 23.dp, start = 23.dp, end = 23.dp)
-            )
-        }
+        )
+    }
         Text(
             text = stringResource(pictureTitleResourceId),
             fontSize = 40.sp,
