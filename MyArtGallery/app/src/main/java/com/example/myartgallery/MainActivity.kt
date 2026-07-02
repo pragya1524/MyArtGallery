@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myartgallery.ui.theme.MyArtGalleryTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.example.myartgallery.ui.auth.AuthScreen
+import com.example.myartgallery.ui.upload.UploadArtScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.myartgallery.ui.feed.ArtFeedScreen
+import com.example.myartgallery.ui.profile.ProfileScreen
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Icon
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.myartgallery.ui.navigation.BottomNavItem
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,170 +76,68 @@ class MainActivity : ComponentActivity() {
                         .background(Color.LightGray),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val auth = FirebaseAuth.getInstance()
+                    var currentUser by remember { mutableStateOf(auth.currentUser) }
+
+                    if (currentUser == null) {
+                        AuthScreen(onAuthSuccess = {
+                            currentUser = auth.currentUser
+                        })
+                    } else {
                     MyArtGalleryApp()
+                    }
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun MyArtGalleryApp( modifier: Modifier = Modifier){
-    var nextStep by remember {mutableStateOf(0)}
-    var previousStep by remember {mutableStateOf(0)}
-    when (nextStep) {
-        0 -> {
-            MyArtGalleryStartAndEnd(
-                imageResourceId = R.drawable.artgallery1,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                TitleResourceId = R.string.app_description,
-                DescriptionResourceId = R.string.Creator,
-                Act = R.string.Start,
-                onStartButtonClick = {
-                    nextStep += 1
-                }
-            )
-        }
+    val navController = rememberNavController()
+    val auth = FirebaseAuth.getInstance()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
-        1 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_1,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_1,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                val items = listOf(BottomNavItem.Home, BottomNavItem.Upload, BottomNavItem.Profile)
+                items.forEach { screen ->
+                    val isCurrentUserProfile = screen == BottomNavItem.Profile && auth.currentUser?.uid != null
+                    val route = if (isCurrentUserProfile) "profile/${auth.currentUser?.uid}" else screen.route
+                    NavigationBarItem(
+                        icon = { Icon(screen.icon, contentDescription = null) },
+                        label = { Text(screen.title) },
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true ||
+                                (isCurrentUserProfile && currentDestination?.route == "profile/{userId}"),
+                        onClick = {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
                 }
-            )
+            }
         }
-
-        2 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_2,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_2,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
+    ) { innerPadding ->
+        NavHost(navController = navController, startDestination = BottomNavItem.Home.route, modifier = Modifier.padding(innerPadding)) {
+            composable(BottomNavItem.Home.route) {
+                ArtFeedScreen(navController = navController)
+            }
+            composable(BottomNavItem.Upload.route) {
+                UploadArtScreen(onUploadSuccess = { navController.popBackStack() })
+            }
+            composable(BottomNavItem.Profile.route) {
+                val userId = it.arguments?.getString("userId") ?: auth.currentUser?.uid
+                if (userId != null) {
+                    ProfileScreen(userId = userId)
                 }
-            )
-        }
-
-        3 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_3,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_3,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-
-        4 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_4,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_4,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-
-        5 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_5,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_5,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-
-        6 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_6,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_6,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-
-        7 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_7,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_7,
-                creatorResourceId = R.string.Creator,
-                shotonResourceId = R.string.iPhone,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-
-        8 -> {
-            MyArtGalleryLayout(
-                imageResourceId = R.drawable.picture_8,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                pictureTitleResourceId = R.string.Picture_8,
-                creatorResourceId = R.string.Co_Creator,
-                shotonResourceId = R.string.Samsung,
-                onPreviousClick = {
-                    nextStep -= 1
-                },
-                onNextClick = {
-                    nextStep += 1
-                }
-            )
-        }
-        9 -> {
-            MyArtGalleryStartAndEnd(
-                imageResourceId = R.drawable.artgallery1,
-                contentDescriptionResourceId = R.string.PictureDescription,
-                TitleResourceId = R.string.End,
-                DescriptionResourceId = R.string.End_Description,
-                Act = R.string.Visit_Again,
-                onStartButtonClick = {
-                    nextStep = 0
-                }
-            )
+            }
         }
     }
 }
